@@ -1,0 +1,81 @@
+{% import '_includes/forms.twig' as forms %}
+
+{% set siteIds = element.getSupportedSites()|filter(site => site.propagate|default)|column('siteId') %}
+{% set sites = siteIds|map(siteId => siteId != element.siteId ? craft.app.sites.siteById(siteId) : null)|filter %}
+
+{% if sites|length %}
+
+    {% set menuId = 'copy-content-menu-' ~ element.id %}
+
+    {{ forms.button({
+        spinner: true,
+        label: 'Copy content'|t('_copycontent'),
+        attributes: {
+            'aria-label': 'Click to copy content from a different site'|t('_copycontent'),
+            'aria-controls': menuId,
+            'data-disclosure-trigger': true
+        }
+    }) }}
+
+    <div id="{{ menuId }}" class="menu" data-align="right">
+        <ul>
+            {% for site in sites %}
+                <li>
+                    <a href="#" data-copycontent-btn data-from-site-id="{{ site.id }}" data-from-site-name="{{ site.name }}" data-to-site-id="{{ element.siteId }}" data-element-id="{{ element.id }}">
+                        {{ 'Copy content from {siteName}...'|t('_copycontent', { siteName: site.name }) }}
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    {% js %}
+        $(() => {
+
+            const onClick = e => {
+                e.preventDefault();
+                const menu = e.target.closest('.menu');
+                const button = document.querySelector(`[aria-controls="${menu.id}"]`);
+                if (button.classList.contains('loading')) {
+                    return;
+                }
+                const { elementId, fromSiteId, fromSiteName, toSiteId } = e.target.dataset;
+                if (!window.confirm(Craft.t('_copycontent', 'Are you sure you want to copy content from {siteName}?', { siteName: fromSiteName }))) {
+                    return;
+                }
+                button.classList.add('loading');
+                $(button).trigger('click');
+                button.focus();
+                const params = {
+                    elementId,
+                    fromSiteId,
+                    toSiteId
+                };
+                Craft
+                    .sendActionRequest(
+                        'POST',
+                        '_copycontent/default',
+                        {
+                            data: params
+                        }
+                    )
+                    .then(() => {
+                        window.location.reload();
+                    })
+                    .catch(({response}) => {
+                        Craft.cp.displayError(response.message || response.data.message);
+                    })
+                    .catch(error => {
+                        console.error(error);
+                    })
+                    .then(() => {
+                        button.classList.remove('loading');
+                    });
+            };
+
+            $('body').on('click', 'a[data-copycontent-btn]', onClick);
+
+        });
+    {% endjs %}
+
+{% endif %}
