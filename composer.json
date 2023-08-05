@@ -2,6 +2,7 @@
     "name": "vaersaagod/craft-copy-content",
     "description": "Adds the ability to copy content between sites.",
     "type": "craft-plugin",
+    "version": "1.0.0",
     "require": {
         "php": ">=8.0.2",
         "craftcms/cms": "^4.4.0"
