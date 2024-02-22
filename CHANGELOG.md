@@ -1,6 +1,6 @@
 # Copy Content Changelog
 
-## Unreleased
+## 1.0.1 - 2024-02-22
 ### Fixed 
 - Fixed an exception that would occur if attempting to copy content to an entry belonging to a disabled site
 - Fixed a bug where the "Copy content" wouldn't appear if all the site entries were disabled
