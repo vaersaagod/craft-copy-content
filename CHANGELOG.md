@@ -1,7 +1,8 @@
 # Copy Content Changelog
 
 ## Unreleased
-
+### Fixed 
+- Fixed an exception that would occur if attempting to copy content to an entry belonging to a disabled site
 ### Changed
 - The "Copy content" button now has an icon 🌍
 

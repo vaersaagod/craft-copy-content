@@ -24,11 +24,9 @@ class DefaultController extends Controller
     protected array|int|bool $allowAnonymous = self::ALLOW_ANONYMOUS_NEVER;
 
     /**
-     * @return Response
+     * @return Response|string|null
+     * @throws ForbiddenHttpException
      * @throws \Throwable
-     * @throws \craft\errors\InvalidFieldException
-     * @throws \yii\base\InvalidConfigException
-     * @throws \yii\db\Exception
      * @throws \yii\web\BadRequestHttpException
      */
     public function actionIndex(): Response|string|null
@@ -41,7 +39,9 @@ class DefaultController extends Controller
         $copyFromSiteId = (int)$this->request->getRequiredBodyParam('fromSiteId');
         $copyToSiteId = (int)$this->request->getRequiredBodyParam('toSiteId');
 
-        Craft::$app->getSites()->setCurrentSite($copyToSiteId);
+        // Need to get the actual site model, because setCurrentSite() will fail if given the ID for a *disabled* site
+        $copyToSite = Craft::$app->getSites()->getSiteById($copyToSiteId, true);
+        Craft::$app->getSites()->setCurrentSite($copyToSite);
 
         $element = Craft::$app->getElements()->getElementById($elementId);
 
