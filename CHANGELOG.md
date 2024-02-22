@@ -3,6 +3,7 @@
 ## Unreleased
 ### Fixed 
 - Fixed an exception that would occur if attempting to copy content to an entry belonging to a disabled site
+- Fixed a bug where the "Copy content" wouldn't appear if all the site entries were disabled
 ### Changed
 - The "Copy content" button now has an icon 🌍
 

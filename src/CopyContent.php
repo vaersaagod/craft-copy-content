@@ -46,10 +46,6 @@ class CopyContent extends Plugin
                 if (!Craft::$app->getElements()->canCreateDrafts($element, $user)) {
                     return;
                 }
-                $otherSiteIds = array_filter(Craft::$app->getElements()->getEnabledSiteIdsForElement($element->id), static fn (int $siteId) => $siteId !== $element->siteId);
-                if (empty($otherSiteIds)) {
-                    return;
-                }
                 $event->html .= Craft::$app->getView()->renderTemplate(
                     '_copycontent/_copy-content-button.twig',
                     ['element' => $event->sender],
